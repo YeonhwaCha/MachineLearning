@@ -2,10 +2,10 @@ import math
 import numpy as np
 from scipy.stats import multivariate_normal
 
-def ApplyBayesianClassifier(queries, class1, class2, class1_sample, class2_sample, class1_mean, class2_mean, class1_cov, class2_cov):
+def apply_bayesian_classifier(queries, class1, class2, class1_sample, class2_sample, class1_mean, class2_mean, class1_cov, class2_cov):
 
-    conditional_class1 = GetPdf(queries, class1_mean, class1_cov);
-    conditional_class2 = GetPdf(queries, class2_mean, class2_cov);
+    conditional_class1 = get_pdf(queries, class1_mean, class1_cov);
+    conditional_class2 = get_pdf(queries, class2_mean, class2_cov);
 
     posterior_class1 =  class1_sample * conditional_class1 / ((class2_sample * conditional_class2) + (class1_sample * conditional_class1));
     posterior_class2 = class2_sample * conditional_class2 / ((class2_sample * conditional_class2) + (class1_sample * conditional_class1));
@@ -26,7 +26,7 @@ def ApplyBayesianClassifier(queries, class1, class2, class1_sample, class2_sampl
     return resultlabel, resultprob
 
 
-def GetPdf(queries, mean, cov):
+def get_pdf(queries, mean, cov):
     # pdf_test = multivariate_normal.pdf(queries, female_mean, female_cov)
     # print "using built in functino : {0}".format(pdf_test)
 

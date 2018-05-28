@@ -2,8 +2,32 @@ import numpy as np
 import scipy
 
 
+def apply_2Dhistogram_classifier(queries, H1, H2, class1, class2, xmin, xmax):
+    B=np.alen(H1);
+    binindices = (np.round((B-1)*(queries-xmin)/(xmax-xmin))).astype('int32');
+
+    count1 = np.zeros(queries.shape[0]).astype('float32');
+    count2 = np.zeros(queries.shape[0]).astype('float32');
+
+    for i, row in enumerate(binindices):
+        count1[i] = H1[row[0], row[1]];
+        count2[i] = H2[row[0], row[1]];
+
+    resultlabel=np.full(np.alen(binindices),"Indeterminate",dtype=object);
+    resultprob=np.full(np.alen(binindices),np.nan,dtype=object);
+    indices1 = count1 > count2;
+    indices2 = count2 > count1;
+    resultlabel[indices1] = str(class1);
+    resultlabel[indices2] = str(class2);
+    probF=count1/(count1+count2);
+    probM=count2/(count1+count2);
+    resultprob[indices1]=probF[indices1];
+    resultprob[indices2]=probM[indices2];
+    return resultlabel, resultprob
+
+
 # nominal scale (Male / Female)
-def Build2DHistogramClassifier(X, T, B, class1, class2, xmin, xmax):
+def build_2Dhistogram_classifier(X, T, B, class1, class2, xmin, xmax):
     H1 = np.zeros((B ,B)).astype('int32');
     H2 = np.zeros((B, B)).astype('int32');
 
@@ -39,31 +63,7 @@ def Build2DHistogramClassifier(X, T, B, class1, class2, xmin, xmax):
 
 
 
-def Apply2DHistogramClassifier(queries, H1, H2, class1, class2, xmin, xmax):
-    B=np.alen(H1);
-    binindices = (np.round((B-1)*(queries-xmin)/(xmax-xmin))).astype('int32');
-
-    count1 = np.zeros(queries.shape[0]).astype('float32');
-    count2 = np.zeros(queries.shape[0]).astype('float32');
-
-    for i, row in enumerate(binindices):
-        count1[i] = H1[row[0], row[1]];
-        count2[i] = H2[row[0], row[1]];
-
-    resultlabel=np.full(np.alen(binindices),"Indeterminate",dtype=object);
-    resultprob=np.full(np.alen(binindices),np.nan,dtype=object);
-    indices1 = count1 > count2;
-    indices2 = count2 > count1;
-    resultlabel[indices1] = str(class1);
-    resultlabel[indices2] = str(class2);
-    probF=count1/(count1+count2);
-    probM=count2/(count1+count2);
-    resultprob[indices1]=probF[indices1];
-    resultprob[indices2]=probM[indices2];
-    return resultlabel, resultprob
-
-
-def Reconstruct(N, mean, cov, reconstruct_fun):
+def reconstruct(N, mean, cov, reconstruct_fun):
     if reconstruct_fun == "gaussian":
         data = np.random.multivariate_normal(mean, cov, N)
         data = data.T
@@ -75,7 +75,7 @@ def Reconstruct(N, mean, cov, reconstruct_fun):
     return data
 
 
-def ReconstructHist(data, B, x_min, x_max, y_min, y_max):
+def reconstruct_hist(data, B, x_min, x_max, y_min, y_max):
     reconstruct = np.zeros((B, B)).astype('int32');
     # make indices based on bin(B)
     binindices_x = (np.round((B - 1) * (data[0,:]- x_min) / (x_max - x_min))).astype('int32');
