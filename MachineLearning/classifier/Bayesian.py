@@ -42,8 +42,8 @@ def get_pdf(queries, mean, cov):
         exp_component = -0.5 * (z.dot(cov_inv)).dot(z.T);
         exp_result.append(np.exp(exp_component)*pdf_const);
 
-    # print "female_mean : \n {0}".format(mean)
-    # print "female_cov : \n {0}".format(np.asmatrix(cov))
+    # print "class1_mean : \n {0}".format(mean)
+    # print "class1_cov : \n {0}".format(np.asmatrix(cov))
     # print "center_queries : \n {0}".format(z)
     # print "cov_inv : \n {0}".format(cov_inv)
     # print "cov_det : {0}".format(cov_det)

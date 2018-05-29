@@ -1,6 +1,8 @@
 from array import array
 
 import numpy as np
+import os
+import PIL.Image as Image
 import struct
 
 
@@ -11,8 +13,31 @@ def load_dataset(dataset, path, set, **arg):
     if dataset == "mnist":
         selecteddigits = arg['selecteddigits']
         dataset = load_mnist(path, set, selecteddigits)
+    elif dataset == "att":
+        dataset = load_att(path)
 
     return dataset
+
+
+####################################################
+# AT&T Facedatabase
+####################################################
+def load_att(dataset_path):
+    db_cls = 0
+    X, T = [], []
+
+    # dirnames = [s1, s2, s3,,,,]
+    for dirpath, dirnames, filenames in os.walk(dataset_path):
+        for dirname in dirnames:
+            database_path = os.path.join(dirpath, dirname)
+            for filename in os.listdir(database_path):
+                image = Image.open(os.path.join(database_path, filename))   #size 92*112 image
+                image = image.convert("L")   #convert to grayscale
+                X.append(np.asarray(image, dtype=np.uint8))
+                T.append(db_cls)
+            db_cls = db_cls+1
+    return X, T
+
 
 
 ###################################################

@@ -52,9 +52,9 @@ def build_2Dhistogram_classifier(X, T, B, class1, class2, xmin, xmax):
     class1_cov = np.cov(class1_data.T)
     class2_cov = np.cov(class2_data.T)
 
-    # print "negative sample cnt : {0}, positive sample cnt : {1}".format(len(negative_set), len(positive_set))
-    # print "negative mean : {0},       positive mean : {1}".format(negative_mean, positive_mean)
-    # print "negative cov : \n {0},     positive cov : \n {1}".format(negative_cov, positive_cov)
+    # print "class1 sample cnt : {0}, class2 sample cnt : {1}".format(len(class1_set), len(class2_set))
+    # print "class1 mean : {0},       class2 mean : {1}".format(class1_mean, class2_mean)
+    # print "class1 cov : \n {0},     class2 cov : \n {1}".format(class1_cov, class2_cov)
 
     return [H1, H2,
             len(class1_set), len(class2_set),
