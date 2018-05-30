@@ -53,6 +53,25 @@ def showMultipleTrainingSets(X, T):
     plt.show()
 
 
+def scatterplot(P, T, class1, class2):
+    np.random.seed(0)
+    randomorder = np.random.permutation(np.arange(len(T)))
+    randomorder = np.arange(len(T))
+
+    # Set colors
+    cols = np.zeros((len(T), 4))  # Initialize matrix to hold colors
+    cols[T == class1] = [1, 0, 0, 0.25]  # Negative points are red (with opacity 0.25)
+    cols[T == class2] = [0, 1, 0, 0.25]  # Positive points are green (with opacity 0.25)
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111, facecolor='black')
+    ax.scatter(P[randomorder, 1], P[randomorder, 0], s=5, linewidths=0, facecolors=cols[randomorder, :], marker="o");
+    ax.set_aspect('equal')
+
+    plt.gca().invert_yaxis()
+    plt.show()
+
+
 def subplot(title, images, rows, cols, sptitle="subplot", sptitles=[], colormap=cm.gray, ticks_visible=True, filename=None):
     fig = plt.figure()
     # the title of the figure
