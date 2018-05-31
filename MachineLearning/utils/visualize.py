@@ -3,6 +3,26 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
+def plot_xy_histogram(H1, H2, B, min, max):
+    plt.figure(figsize=(10, 5));
+    opacity = 0.5
+    [bincenters, binwidth] = np.linspace(min, max, num=B, retstep=True);
+    rects1 = plt.bar(bincenters - (binwidth / 2), H1, binwidth,
+                     alpha=opacity,
+                     color='pink',
+                     edgecolor='black',
+                     label='Female')
+    rects2 = plt.bar(bincenters + (binwidth / 2), H2, binwidth,
+                     alpha=opacity,
+                     color='b',
+                     edgecolor='black',
+                     label='Male')
+    plt.xlabel('Height')
+    plt.ylabel('Count')
+    plt.xticks(bincenters, bincenters.astype('int32'), fontsize=10)
+    plt.legend()
+    plt.show()
+
 def plot_xyz_histogram(data1, data2):
     data_array_1 = np.array(data1)
     data_array_2 = np.array(data2)

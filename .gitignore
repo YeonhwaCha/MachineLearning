@@ -1,0 +1,5 @@
+.idea/
+*.pyc
+*.html
+.DS_Store
+DataSet/

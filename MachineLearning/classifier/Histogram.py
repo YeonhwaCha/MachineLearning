@@ -2,9 +2,30 @@ import numpy as np
 import scipy
 
 
+def apply_1Dhistogram_classifier(queries, H1, H2, class1, class2, min, max):
+    B = np.alen(H1);
+    queries = queries.reshape(queries.shape[0],)
+    binindices = np.clip((np.round(((B - 1) * (queries - min) / (max - min)))).astype('int32'), 0, B - 1);
+    count_class1 = H1[binindices];
+    count_class2 = H2[binindices];
+    resultlabel = np.full(np.alen(binindices), "Indeterminate", dtype=object);
+    resultprob = np.full(np.alen(binindices), np.nan, dtype=object);
+    indices_class1 = count_class1 > count_class2;
+    indices_class2 = count_class2 > count_class1;
+    resultlabel[indices_class1] = class1;
+    resultlabel[indices_class2] = class2;
+    prob_class1 = count_class1 / (count_class1 + count_class2);
+    prob_class2 = count_class2 / (count_class1 + count_class2);
+    resultprob[indices_class1] = prob_class1[indices_class1];
+    resultprob[indices_class2] = prob_class2[indices_class2];
+
+    return resultlabel, resultprob
+
+
+
 def apply_2Dhistogram_classifier(queries, H1, H2, class1, class2, xmin, xmax):
-    B=np.alen(H1);
-    binindices = (np.round((B-1)*(queries-xmin)/(xmax-xmin))).astype('int32');
+    B = np.alen(H1);
+    binindices = (np.round((B - 1) * (queries - xmin) / (xmax - xmin))).astype('int32');
 
     count1 = np.zeros(queries.shape[0]).astype('float32');
     count2 = np.zeros(queries.shape[0]).astype('float32');
@@ -13,17 +34,39 @@ def apply_2Dhistogram_classifier(queries, H1, H2, class1, class2, xmin, xmax):
         count1[i] = H1[row[0], row[1]];
         count2[i] = H2[row[0], row[1]];
 
-    resultlabel=np.full(np.alen(binindices),"Indeterminate",dtype=object);
-    resultprob=np.full(np.alen(binindices),np.nan,dtype=object);
+    resultlabel = np.full(np.alen(binindices), "Indeterminate", dtype=object);
+    resultprob = np.full(np.alen(binindices), np.nan, dtype=object);
     indices1 = count1 > count2;
     indices2 = count2 > count1;
     resultlabel[indices1] = str(class1);
     resultlabel[indices2] = str(class2);
-    probF=count1/(count1+count2);
-    probM=count2/(count1+count2);
-    resultprob[indices1]=probF[indices1];
-    resultprob[indices2]=probM[indices2];
+    probF = count1 / (count1 + count2);
+    probM = count2 / (count1 + count2);
+    resultprob[indices1] = probF[indices1];
+    resultprob[indices2] = probM[indices2];
     return resultlabel, resultprob
+
+
+
+def build_1Dhistogram_classifier(X, T, B, class1, class2, min, max):
+    H1 = np.zeros(B).astype('float32');
+    H2 = np.zeros(B).astype('float32');
+
+    binindices = (np.round((B - 1) * (X - min)/(max - min))).astype('int32');
+
+    class1_set = [];
+    class2_set = [];
+
+    for i,b in enumerate(binindices):
+        if T[i] == class1:
+            H1[b] += 1;
+            class1_set.append(X[i])
+        elif T[i] == class2:
+            H2[b] += 1;
+            class2_set.append(X[i])
+
+    return [H1, H2, len(class1_set), len(class2_set), np.mean(class1_set), np.mean(class2_set), np.var(class1_set), np.var(class2_set)]
+
 
 
 # nominal scale (Male / Female)
