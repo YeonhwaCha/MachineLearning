@@ -4,7 +4,8 @@ from scipy.stats import multivariate_normal
 
 def apply_bayesian_classifier(queries, dim, class1, class2, class1_sample, class2_sample, class1_mean, class2_mean, class1_cov, class2_cov):
 
-    queries = queries.reshape(queries.shape[0],)
+    if dim == 1:
+        queries = queries.reshape(queries.shape[0],)
 
     conditional_class1 = get_pdf(queries, class1_mean, class1_cov, dim);
     conditional_class2 = get_pdf(queries, class2_mean, class2_cov, dim);
@@ -51,14 +52,6 @@ def get_pdf(queries, mean, var, dim):
             exp_component = -0.5 * (z.dot(cov_inv)).dot(z.T);
 
         exp_result.append(np.exp(exp_component)*pdf_const);
-
-    # print "class1_mean : \n {0}".format(mean)
-    # print "class1_cov : \n {0}".format(np.asmatrix(cov))
-    # print "center_queries : \n {0}".format(z)
-    # print "cov_inv : \n {0}".format(cov_inv)
-    # print "cov_det : {0}".format(cov_det)
-    # print "pdf_const : {0}".format(pdf_const)
-    # print "exp_result : {0}".format(exp_result)
 
     return np.array(exp_result)
 

@@ -6,18 +6,20 @@ def apply_1Dhistogram_classifier(queries, H1, H2, class1, class2, min, max):
     B = np.alen(H1);
     queries = queries.reshape(queries.shape[0],)
     binindices = np.clip((np.round(((B - 1) * (queries - min) / (max - min)))).astype('int32'), 0, B - 1);
+
     count_class1 = H1[binindices];
     count_class2 = H2[binindices];
+
     resultlabel = np.full(np.alen(binindices), "Indeterminate", dtype=object);
     resultprob = np.full(np.alen(binindices), np.nan, dtype=object);
-    indices_class1 = count_class1 > count_class2;
-    indices_class2 = count_class2 > count_class1;
-    resultlabel[indices_class1] = class1;
-    resultlabel[indices_class2] = class2;
+    indices1 = count_class1 > count_class2;
+    indices2 = count_class2 > count_class1;
+    resultlabel[indices1] = class1;
+    resultlabel[indices2] = class2;
     prob_class1 = count_class1 / (count_class1 + count_class2);
     prob_class2 = count_class2 / (count_class1 + count_class2);
-    resultprob[indices_class1] = prob_class1[indices_class1];
-    resultprob[indices_class2] = prob_class2[indices_class2];
+    resultprob[indices1] = prob_class1[indices1];
+    resultprob[indices2] = prob_class2[indices2];
 
     return resultlabel, resultprob
 
@@ -25,25 +27,26 @@ def apply_1Dhistogram_classifier(queries, H1, H2, class1, class2, min, max):
 
 def apply_2Dhistogram_classifier(queries, H1, H2, class1, class2, xmin, xmax):
     B = np.alen(H1);
-    binindices = (np.round((B - 1) * (queries - xmin) / (xmax - xmin))).astype('int32');
+    binindices = np.clip((np.round(((B - 1) * (queries - xmin) / (xmax - xmin)))).astype('int32'), 0, B - 1);
 
-    count1 = np.zeros(queries.shape[0]).astype('float32');
-    count2 = np.zeros(queries.shape[0]).astype('float32');
+    count_class1 = np.zeros(queries.shape[0]).astype('float32');
+    count_class2 = np.zeros(queries.shape[0]).astype('float32');
 
     for i, row in enumerate(binindices):
-        count1[i] = H1[row[0], row[1]];
-        count2[i] = H2[row[0], row[1]];
+        count_class1[i] = H1[row[0], row[1]];
+        count_class2[i] = H2[row[0], row[1]];
 
     resultlabel = np.full(np.alen(binindices), "Indeterminate", dtype=object);
     resultprob = np.full(np.alen(binindices), np.nan, dtype=object);
-    indices1 = count1 > count2;
-    indices2 = count2 > count1;
-    resultlabel[indices1] = str(class1);
-    resultlabel[indices2] = str(class2);
-    probF = count1 / (count1 + count2);
-    probM = count2 / (count1 + count2);
-    resultprob[indices1] = probF[indices1];
-    resultprob[indices2] = probM[indices2];
+    indices1 = count_class1 > count_class2;
+    indices2 = count_class2 > count_class1;
+    resultlabel[indices1] = class1;
+    resultlabel[indices2] = class2;
+    prob_class1 = count_class1 / (count_class1 + count_class2);
+    prob_class2 = count_class2 / (count_class1 + count_class2);
+    resultprob[indices1] = prob_class1[indices1];
+    resultprob[indices2] = prob_class2[indices2];
+
     return resultlabel, resultprob
 
 
@@ -71,11 +74,11 @@ def build_1Dhistogram_classifier(X, T, B, class1, class2, min, max):
 
 # nominal scale (Male / Female)
 def build_2Dhistogram_classifier(X, T, B, class1, class2, xmin, xmax):
-    H1 = np.zeros((B ,B)).astype('int32');
-    H2 = np.zeros((B, B)).astype('int32');
+    H1 = np.zeros((B ,B)).astype('float32');
+    H2 = np.zeros((B, B)).astype('float32');
 
     # make indices based on bin(B)
-    binindices = (np.round((B-1)*(X-xmin)/(xmax-xmin))).astype('int32');
+    binindices = (np.round((B - 1) * (X - xmin)/(xmax - xmin))).astype('int32');
 
     class1_set = [];
     class2_set = [];
@@ -94,10 +97,6 @@ def build_2Dhistogram_classifier(X, T, B, class1, class2, xmin, xmax):
     class2_mean = np.mean(class2_data, axis=0)
     class1_cov = np.cov(class1_data.T)
     class2_cov = np.cov(class2_data.T)
-
-    # print "class1 sample cnt : {0}, class2 sample cnt : {1}".format(len(class1_set), len(class2_set))
-    # print "class1 mean : {0},       class2 mean : {1}".format(class1_mean, class2_mean)
-    # print "class1 cov : \n {0},     class2 cov : \n {1}".format(class1_cov, class2_cov)
 
     return [H1, H2,
             len(class1_set), len(class2_set),

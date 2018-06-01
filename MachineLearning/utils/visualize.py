@@ -2,6 +2,8 @@ import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import numpy as np
 
+from mpl_toolkits.mplot3d.axes3d import Axes3D
+
 
 def plot_xy_histogram(H1, H2, B, min, max):
     plt.figure(figsize=(10, 5));
@@ -60,7 +62,7 @@ def plot_xyz_histogram(data1, data2):
     plt.show()
 
 
-def showMultipleTrainingSets(X, T):
+def showMultipleTrainingSets(X, T, rows, cols):
     print('Checking multiple training vectors by plotting images.')
     plt.close('all')
     fig = plt.figure()
@@ -69,7 +71,7 @@ def showMultipleTrainingSets(X, T):
     for row in range(nrows):
         for col in range(ncols):
             plt.subplot(nrows, ncols, row*ncols+col + 1)
-            vectortoimg(X[np.random.randint(len(T))], show = False)
+            vectortoimg(X[np.random.randint(len(T))], rows, cols, show = False)
     plt.show()
 
 
@@ -115,8 +117,8 @@ def subplot(title, images, rows, cols, sptitle="subplot", sptitles=[], colormap=
         fig.savefig(filename)
 
 
-def vectortoimg(v, show = True):
-    plt.imshow(v.reshape(28, 28), interpolation = 'None', cmap = 'gray')
+def vectortoimg(v, rows, cols, show = True):
+    plt.imshow(v.reshape(rows, cols), interpolation = 'None', cmap = 'gray')
     plt.axis('off')
     if show:
         plt.show()
