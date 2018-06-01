@@ -117,16 +117,13 @@ def reconstruct(N, mean, cov, reconstruct_fun):
     return data
 
 
-def reconstruct_hist(data, B, x_min, x_max, y_min, y_max):
+def reconstruct_hist(data, B, min, max):
     reconstruct = np.zeros((B, B)).astype('int32');
     # make indices based on bin(B)
-    binindices_x = (np.round((B - 1) * (data[0,:]- x_min) / (x_max - x_min))).astype('int32');
-    binindeces_y = (np.round((B - 1) * (data[1,:]- y_min) / (y_max - y_min))).astype('int32');
-    columns = list(enumerate(binindeces_y));
+    binindices = np.clip((np.round(((B - 1) * (data - min) / (max - min)))).astype('int32'), 0, B - 1);
 
-    for i, row in enumerate(binindices_x):
-        column = columns[i];
-        reconstruct[row][column[1]] += 1;
+    for i, row in enumerate(binindices):
+        reconstruct[row[0], row[1]] += 1;
 
     return reconstruct
 

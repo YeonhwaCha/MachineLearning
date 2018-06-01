@@ -1,7 +1,7 @@
 import numpy as np
 
 from classifier.Bayesian import apply_bayesian_classifier
-from classifier.Histogram import apply_2Dhistogram_classifier, build_2Dhistogram_classifier
+from classifier.Histogram import apply_2Dhistogram_classifier, build_2Dhistogram_classifier, reconstruct, reconstruct_hist
 from pandas import DataFrame
 from utils.excels import read_excels
 from utils.visualize import plot_xyz_histogram
@@ -56,28 +56,17 @@ if __name__ == "__main__":
     print(DataFrame([resultHlabel, resultHprob]).T)
 
 
-# #####################################################################################
-#
-# #####################################################################################
-# # Reconstruct Histogram
-# ######################################################################################
-# data1 = Reconstruct(B, female_sample, female_mean, female_cov, 'gaussian')
-# data2 = Reconstruct(B, male_sample, male_mean, male_cov, 'gaussian')
-# data = np.hstack((data1, data2))
-#
-# # [problem 1] - calculate max and min
-# heightX_min = np.amin(data[0, :]);
-# heightX_max = np.amax(data[0, :]);
-# handspanX_min = np.amin(data[1, :]);
-# handspanX_max = np.amax(data[1, :]);
-#
-# minAndMax = np.zeros((4, 1)).astype('float32')
-# minAndMax[0, 0] = heightX_min;
-# minAndMax[1, 0] = heightX_max;
-# minAndMax[2, 0] = handspanX_min;
-# minAndMax[3, 0] = handspanX_max;
-#
-# reconstruct = ReconstructHist(data1, B, heightX_min, heightX_max, handspanX_min, handspanX_max)
-#
-# reconstruct = ReconstructHist(data2, B, heightX_min, heightX_max, handspanX_min, handspanX_max)
+    #####################################################################################
+    # Reconstruct Histogram
+    ######################################################################################
+    data1 = reconstruct(H1_count, H1_mean, H1_cov, 'gaussian')
+    data2 = reconstruct(H2_count, H2_mean, H2_cov, 'gaussian')
+    data = np.hstack((data1, data2))
+
+    # [problem 1] - calculate max and min
+    min = np.amin(data, axis=1).reshape((2,1));
+    max = np.amax(data, axis=1).reshape((2,1));
+
+    reconstruct = reconstruct_hist(data1, B, min, max)
+    reconstruct = reconstruct_hist(data2, B, min, max)
 
