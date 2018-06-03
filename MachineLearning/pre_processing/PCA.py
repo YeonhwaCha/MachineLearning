@@ -2,11 +2,11 @@ import numpy as np
 
 
 ############################################################################
-# PCA componants
+# PCA
 # (X : input, Z : X - mean, C : covariance, V : eigenvector)
 # return [eigenvalues, eigenvectors, mean]
 ############################################################################
-def get_pca_componants(X, y, num_principal_componant = 10):
+def pca(X, T, num_principal_componant = 0):
     [n, d] = X.shape
 
     if (num_principal_componant <= 0) or (num_principal_componant >n):
@@ -55,11 +55,11 @@ def normalize(X, low, high, dtype=None):
     return np.asarray(X, dtype=dtype)
 
 
-def project(eigen_vector, X, mu=None):
-    if mu is None:
+def project(eigen_vector, X, mean=None):
+    if mean is None:
         return np.dot(X, eigen_vector)
     # Z * eigen_vector :: Principal Components
-    return np.dot(X - mu, eigen_vector)
+    return np.dot(X - mean, eigen_vector)
 
 
 def reconstruct(eigen_vector, P, mu=None):

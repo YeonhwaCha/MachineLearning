@@ -12,13 +12,13 @@ if __name__ == "__main__":
     ################################################
     # load train set
     ################################################
-    train_file_path = r"../../DataSet/histogram_train.xlsx"
+    train_file_path = r"../../DataSet/Histogram1D/histogram_train.xlsx"
     train_data = read_excels(train_file_path)
 
     ################################################
     # load test set
     ################################################
-    test_file_path = r"../../DataSet/histogram_test.xlsx"
+    test_file_path = r"../../DataSet/Histogram1D/histogram_test.xlsx"
     test = read_excels(test_file_path)
 
     #################################################
@@ -40,7 +40,7 @@ if __name__ == "__main__":
     [H1, H2, H1_count, H2_count, H1_mean, H2_mean, H1_cov, H2_cov] = \
         build_1Dhistogram_classifier(X, T, B, 'Female', 'Male', min, max)
     # show histogram
-    # plot_xy_histogram(H1, H2, B, min, max)
+    plot_xy_histogram(H1, H2, B, min, max)
 
     ##################################################################################
     # Classifier

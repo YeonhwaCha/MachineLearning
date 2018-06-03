@@ -1,6 +1,7 @@
 import numpy as np
 
 from sklearn import linear_model
+from sklearn.metrics import confusion_matrix
 
 def train(X, T, type):
     print "[train] Linear Regression.."
@@ -22,3 +23,6 @@ def predict(model, X):
     P = model.predict(X)
 
     return P
+
+def get_confusion_matrix(X, T):
+    return confusion_matrix(X, T)
