@@ -1,9 +1,12 @@
 from pre_processing.PCA import pca, normalize, project, reconstruct
 from models.model_pca import EigenVectorModel
-from utils.load_dataset import load_att
+from utils.load_dataset import load_dataset
 from utils.visualize import subplot
 
 import matplotlib.cm as cm
+
+# TEST_SET = "att"
+TEST_SET = "mnist"
 
 if __name__  == "__main__":
     ######################################################################
@@ -11,7 +14,17 @@ if __name__  == "__main__":
     # DataSet CopyRight : AT&T Laboratories Cambridge
     # http://www.cl.cam.ac.uk/research/dtg/attarchive/facedatabase.html
     ######################################################################
-    X, T, shape = load_att("../../DataSet/PCA/orl_faces")
+    if TEST_SET == "att":
+        file_path = "../../DataSet/PCA/orl_faces"
+        X, T, shape = load_dataset(TEST_SET, file_path)
+    ######################################################################
+    # Load DataSet
+    # DataSet CopyRight : New York Univ. Google Labs.
+    # http://yann.lecun.com/exdb/mnist/
+    ######################################################################
+    else:
+        file_path = "../../DataSet/PCA/mnist/"
+        X, T, shape = load_dataset(TEST_SET, file_path, set = "training", selecteddigits = [2, 8])
 
     [eigen_value, eigen_vector, mean] = pca(X, T)
 

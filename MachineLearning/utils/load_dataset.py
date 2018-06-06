@@ -1,4 +1,5 @@
 from array import array
+from utils.tools import asRowMatrix
 
 import numpy as np
 import os
@@ -9,19 +10,20 @@ import struct
 ###################################################
 # load dataset
 ###################################################
-def load_dataset(dataset, path, set, **arg):
+def load_dataset(dataset, path, **arg):
     if dataset == "mnist":
         selecteddigits = arg['selecteddigits']
-        dataset = load_mnist(path, set, selecteddigits)
+        set = arg['set']
+        return load_mnist(path, set, selecteddigits)
     elif dataset == "att":
-        dataset = load_att(path)
+        return load_att(path)
 
     return dataset
 
 
-####################################################
+#####################################################################
 # AT&T Facedatabase
-####################################################
+#####################################################################
 def load_att(dataset_path):
     db_cls = 0
     X, T = [], []
@@ -36,7 +38,10 @@ def load_att(dataset_path):
                 X.append(np.asarray(image, dtype=np.uint8))
                 T.append(db_cls)
             db_cls = db_cls+1
-    return X, T
+
+    img_shape = X[0].shape
+
+    return asRowMatrix(X), T, img_shape
 
 
 
@@ -51,7 +56,7 @@ def load_mnist(path, dataset="training", selecteddigits = range(10)):
         fname_digits = path + 't10k-images-idx3-ubyte'
         fname_labels = path + 't10k-labels-idx1-ubyte'
     else:
-        raise ValueError("dataset must be 'testing' or 'trainig'")
+        raise ValueError("dataset must be 'testing' or 'training'")
 
     # Import digits data
     digitsfileobject = open(fname_digits, 'rb')
@@ -79,4 +84,6 @@ def load_mnist(path, dataset="training", selecteddigits = range(10)):
         X[i] = digitsdata[indices[i]*rows*cols:(indices[i]+1)*rows*cols]
         T[i] = labelsdata[indices[i]]
 
-    return X,T
+    image_shape = (rows, cols)
+
+    return X, T, image_shape
