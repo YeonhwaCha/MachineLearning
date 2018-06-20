@@ -1,26 +1,23 @@
 import numpy as np
 
-from sklearn import linear_model
 from sklearn.metrics import confusion_matrix
 
 def train(X, T, type):
     print "[train] Linear Regression.."
-    linear_regression= linear_model.LinearRegression()
-    linear_regression.fit(X, T)
+    #[[1, x(0,1), x(0,2).... x(0, n)]
+    # [1, x(1,1), x(1,2).... x(1, n)]
+    # [1, x(n,1), x(n,2).... x(n, n]]
+    Augment_X = np.hstack((np.ones((X.shape[0], 1)), X))
+    # In the case of non-square X, we can use pseudo-inverse(pinv)
+    # refer to note
+    W = np.dot(np.linalg.pinv(Augment_X), T)
 
-    coef = linear_regression.coef_  # w_1 ~ w_n
-    intercept = linear_regression.intercept_  # w_0
-    if type == "binary":
-        W = np.append(intercept, coef)
-    else:
-        W = np.hstack((intercept.reshape((intercept.shape[0],1)), coef))
-        W = np.transpose(W)
+    return W
 
-    return linear_regression, W
-
-def predict(model, X):
+def predict(weight, X):
     print "[predict] Linear Regression.."
-    P = model.predict(X)
+    Augment_X = np.hstack((np.ones((X.shape[0], 1)), X))
+    P = np.dot(Augment_X, weight)
 
     return P
 
