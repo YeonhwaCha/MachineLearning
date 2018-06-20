@@ -23,6 +23,8 @@ def load_dataset(dataset, path, **arg):
 
 #####################################################################
 # AT&T Facedatabase
+# DataSet CopyRight : AT&T Laboratories Cambridge
+# http://www.cl.cam.ac.uk/research/dtg/attarchive/facedatabase.html
 #####################################################################
 def load_att(dataset_path):
     db_cls = 0
@@ -47,6 +49,8 @@ def load_att(dataset_path):
 
 ###################################################
 # mnist
+# DataSet CopyRight : New York Univ. Google Labs.
+# http://yann.lecun.com/exdb/mnist/
 ###################################################
 def load_mnist(path, dataset="training", selecteddigits = range(10)):
     if dataset == "training":
